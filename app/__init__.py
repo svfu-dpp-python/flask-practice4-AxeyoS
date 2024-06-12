@@ -1,6 +1,7 @@
 from flask import Flask
 
 from .models import db, migrate
+from .admin import admin, StudentModelView
 from . import views
 
 
@@ -14,10 +15,12 @@ def create_app():
     # База данных
     db.init_app(app)
     migrate.init_app(app, db)
+    admin.init_app(app)
 
     # Функции представления
     app.add_url_rule("/", view_func=views.index_page)
     app.add_url_rule("/login/", view_func=views.login_page, methods=["GET", "POST"])
     app.add_url_rule("/logout/", view_func=views.logout)
+    admin.add_view(StudentModelView(models.Student, db.session))
 
     return app
